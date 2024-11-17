@@ -49,11 +49,16 @@ feature {NONE} -- Initialization
 			main_window.put (box)
 			main_window.set_title ("Company Designer")
 			main_window.set_size (400, 300)
+
+			create employee_arr.make (0)  --Create globally
+			create manager_arr.make (0)
+			create exec_arr.make (0)
+
 			main_window.show
 
 			quit_button.select_actions.extend (agent quit_application)
 			add_employee_button.select_actions.extend (agent show_add_employee_interface)
-			remove_employee_button.select_actions.extend (agent remove_employee)
+			remove_employee_button.select_actions.extend (agent show_remove_interface)
 			display_company_tree_button.select_actions.extend (agent display_tree)
 			print_employee_info_button.select_actions.extend (agent print_employee_info)
 			update_employee_button.select_actions.extend (agent edit_employee)
@@ -93,7 +98,7 @@ feature {NONE} -- Initialization
 			quit_button.set_minimum_size (150, 30)
 		end
 
-feature -- Buttons
+feature -- Buttons for home page
 
 	add_employee_button: EV_BUTTON -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_button_chart.html
 	remove_employee_button: EV_BUTTON
@@ -102,6 +107,12 @@ feature -- Buttons
 	update_employee_button: EV_BUTTON
 	search_employee_button: EV_BUTTON
 	quit_button: EV_BUTTON
+
+feature -- Arrays for staff
+
+	employee_arr: ARRAYED_LIST [EMPLOYEE] -- https://www.eiffel.org/doc/solutions/EiffelBase_Data_Structures%2C_Lists Resizable
+	manager_arr: ARRAYED_LIST [MANAGER]
+	exec_arr: ARRAYED_LIST [EXECUTIVE]
 
 feature {NONE} -- implementation of the Add Employee feature
 
@@ -176,7 +187,7 @@ feature {NONE} -- implementation of the Add Employee feature
 			add_employee_window.show
 		end
 
-	return_to_main_page (current_window: EV_WINDOW)
+	return_to_main_page (current_window: EV_WINDOW) -- feature
 		do
 			-- closes the current add employee window
 			if attached current_window as l_window then
@@ -185,7 +196,7 @@ feature {NONE} -- implementation of the Add Employee feature
 			main_window.show
 		end
 
-	process_employee_input (a_name_input: EV_TEXT_FIELD; a_job_title_dropdown: EV_COMBO_BOX; a_work_mode_dropdown: EV_COMBO_BOX)
+	process_employee_input (a_name_input: EV_TEXT_FIELD; a_job_title_dropdown: EV_COMBO_BOX; a_work_mode_dropdown: EV_COMBO_BOX) -- feature
 	local
 		confirm_window: EV_WINDOW
 		confirm_box: EV_VERTICAL_BOX
@@ -202,6 +213,7 @@ feature {NONE} -- implementation of the Add Employee feature
 		executive_title_label, manager_title_label: EV_LABEL
 		finalize_button: EV_BUTTON
 		remote_label: EV_LABEL
+		i: INTEGER
 	do
 		-- default values
 		job_title_text := "Unknown Job Title"
@@ -237,12 +249,16 @@ feature {NONE} -- implementation of the Add Employee feature
 			confirm_box.extend (manager_title_label)
 
 			create manager_dropdown.default_create
-			create manager_list.make (0)
+			create manager_list.make(manager_arr.count)
 
-			-- *** TODO: makes a list with Manager 1-3 for now, need to implement a loop that goes through manager-level nodes
-			manager_list.extend ("Manager 1")
-			manager_list.extend ("Manager 2")
-			manager_list.extend ("Manager 3")
+			-- Goes through global manager array now
+			from
+				i := 1
+			until
+				i > manager_arr.count
+			loop
+				manager_list.extend (manager_arr.at (i).name)
+			end
 			manager_dropdown.set_strings (manager_list)
 			confirm_box.extend (manager_dropdown)
 
@@ -331,6 +347,94 @@ feature {NONE} -- implementation of the Add Employee feature
 		end
 
 
+feature {NONE} -- Implementation of the remove employee button
+
+	show_remove_interface
+		local
+			remove_employee_window: EV_WINDOW
+			input_box: EV_VERTICAL_BOX
+			back_button: EV_BUTTON
+			delete_button: EV_BUTTON
+			employee_dropdown: EV_COMBO_BOX
+			manager_dropdown: EV_COMBO_BOX
+			executive_dropdown: EV_COMBO_BOX
+			i: INTEGER
+			employee_list, manager_list, executive_list: ARRAYED_LIST [STRING_32] -- lists for the dropdowns
+			selected_employee_name: STRING_32
+		do
+			create remove_employee_window.default_create
+			remove_employee_window.set_title ("Remove an Employee")
+			remove_employee_window.set_size (400, 300)
+
+
+			create input_box.default_create
+
+			-- Employee Dropdown
+			create employee_dropdown.default_create
+			employee_dropdown.set_text ("Select Employee")
+			create employee_list.make (employee_arr.count)
+
+			from
+				i := 1
+			until
+				i > employee_arr.count
+			loop
+				employee_list.extend (employee_arr.at (i).name)
+				i := i + 1
+			end
+			employee_dropdown.set_strings (employee_list)
+			input_box.extend (employee_dropdown)
+
+			-- Manager Dropdown
+			create manager_dropdown.default_create
+			manager_dropdown.set_text ("Select Manager")
+			create manager_list.make (manager_arr.count)
+			from
+				i := 1
+			until
+				i > manager_arr.count
+			loop
+				manager_list.extend (manager_arr.at (i).name)
+				i := i + 1
+			end
+			manager_dropdown.set_strings (manager_list)
+			input_box.extend (manager_dropdown)
+
+			-- Executive Dropdown
+			create executive_dropdown.default_create
+			executive_dropdown.set_text ("Select Executive")
+			create executive_list.make (exec_arr.count)
+			from
+				i := 1
+			until
+				i > exec_arr.count
+			loop
+				executive_list.extend (exec_arr.at (i).name)
+				i := i + 1
+			end
+			executive_dropdown.set_strings (executive_list)
+			input_box.extend (executive_dropdown)
+
+			create delete_button.default_create
+			delete_button.set_text ("Delete")
+			--delete_button.select_actions.extend (agent delete_employee)
+
+			create back_button.default_create
+			back_button.set_text ("Back")
+			back_button.select_actions.extend (agent return_to_main_page (remove_employee_window))
+
+
+			input_box.extend (delete_button)
+			input_box.extend (back_button)
+
+			remove_employee_window.put (input_box)
+
+			remove_employee_window.show
+		end -- end show_remove_interface
+
+	--delete_employee
+
+
 feature
 
 	quit_application
@@ -338,11 +442,6 @@ feature
 			if attached main_window as l_window then
 				l_window.destroy
 			end
-		end
-
-	remove_employee
-		do
-			io.put_string ("Remove WORKS")
 		end
 
 	display_tree
