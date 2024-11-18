@@ -26,10 +26,6 @@ feature {NONE} -- Initialization
 			box: EV_VERTICAL_BOX -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_vertical_box_chart.html
 			title_label: EV_LABEL -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_label_chart.html
 			font: EV_FONT -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_font_chart.html
-			TEST: EMPLOYEE -- tESTING TEMP
-			TEST2: MANAGER
-			TEST3: EMPLOYEE
-			test4: MANAGER
 		do
 			create_interface_objects
 			create box.default_create
@@ -57,15 +53,6 @@ feature {NONE} -- Initialization
 			create employee_arr.make (0)  --Create globally
 			create manager_arr.make (0)
 			create exec_arr.make (0)
-			-- Te
-			create TEST.make_with_arguments ("Mike", "SWE", "Joe") -- temp 4 test
-			create test2.make_with_reports ("JOE", "SWE LEAD", "Boss", 112, employee_arr.to_array)
-			manager_arr.put_front (test2)
-			employee_arr.put_front (TEST)-- temp
-			create test3.make_with_arguments ("Fat Perez", "At", "Joe")
-			employee_arr.put_front (test3)
-			create test4.make_with_reports ("Big Joe", "SWE LEAD", "Boss", 112, employee_arr.to_array)
-			manager_arr.put_front (test4)
 
 			main_window.show
 
@@ -166,7 +153,7 @@ feature {NONE} -- implementation of the Add Employee feature
 			job_titles.extend ("Executive")
 			job_titles.extend ("CEO")
 			job_title_dropdown.set_strings (job_titles)
-
+			--XX
 			create work_mode_label.default_create
 			work_mode_label.set_text ("Select Work Mode:")
 
@@ -176,7 +163,7 @@ feature {NONE} -- implementation of the Add Employee feature
 			work_modes.extend ("Hybrid")
 			work_modes.extend ("Remote")
 			work_mode_dropdown.set_strings (work_modes)
-
+			--XX
 			-- adds a Continue Button
 			create continue_button.default_create
 			continue_button.set_text ("Continue")
@@ -191,8 +178,8 @@ feature {NONE} -- implementation of the Add Employee feature
 			input_box.extend (name_input)
 			input_box.extend (job_title_label)
 			input_box.extend (job_title_dropdown)
-			input_box.extend (work_mode_label)
-			input_box.extend (work_mode_dropdown)
+			input_box.extend (work_mode_label) --X
+			input_box.extend (work_mode_dropdown) --X
 			input_box.extend (continue_button)
 			input_box.extend (back_button)
 
@@ -227,6 +214,10 @@ feature {NONE} -- implementation of the Add Employee feature
 		finalize_button: EV_BUTTON
 		remote_label: EV_LABEL
 		i: INTEGER
+		-- Temps for creation & add to array
+		staff_emp: EMPLOYEE
+		staff_manager: MANAGER
+		staff_exec: EXECUTIVE
 	do
 		-- default values
 		job_title_text := "Unknown Job Title"
@@ -261,6 +252,7 @@ feature {NONE} -- implementation of the Add Employee feature
 			manager_title_label.set_text ("Select the Manager that " + a_name_input.text + " reports to:")
 			confirm_box.extend (manager_title_label)
 
+
 			create manager_dropdown.default_create
 			create manager_list.make(manager_arr.count)
 
@@ -272,8 +264,13 @@ feature {NONE} -- implementation of the Add Employee feature
 			loop
 				manager_list.extend (manager_arr.at (i).name)
 			end
-			manager_dropdown.set_strings (manager_list)
-			confirm_box.extend (manager_dropdown)
+
+		manager_dropdown.set_strings (manager_list)
+		confirm_box.extend (manager_dropdown)
+		create staff_emp.make_with_arguments (a_name_input.text, a_job_title_dropdown.text, manager_dropdown.selected_text)
+		employee_arr.put_front (staff_emp)
+
+
 
 		elseif job_title_text.is_equal ("Manager") then
 
@@ -285,12 +282,26 @@ feature {NONE} -- implementation of the Add Employee feature
 			create executive_dropdown.default_create
 			create executive_list.make (0)
 
-			-- *** TODO: makes a list with Executive 1-3 for now, need to implement a loop that goes through executive-level nodes
-			executive_list.extend ("Executive 1")
-			executive_list.extend ("Executive 2")
-			executive_list.extend ("Executive 3")
+			-- Goes through global executive array
+			from
+				i := 1
+			until
+				i > exec_arr.count
+			loop
+				executive_list.extend (exec_arr.at (i).name)
+			end
 			executive_dropdown.set_strings (executive_list)
 			confirm_box.extend (executive_dropdown)
+			-- Ensure office_number_input is attached and handle it accordingly
+			if attached office_number_input as office_input then
+    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, office_input.text.to_integer, employee_arr.to_array)
+    			manager_arr.put_front (staff_manager)
+			else
+
+    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, 100, employee_arr.to_array) -- Temp have not been able to work around the error object may be void, this fixes but not allowing for input
+				manager_arr.put_front (staff_manager)
+			end
+
 
 		elseif job_title_text.is_equal ("Executive") then
 			-- adds a label for CEO reporting
@@ -318,6 +329,13 @@ feature {NONE} -- implementation of the Add Employee feature
 				create conference_room_input.default_create
 				conference_room_input.set_text ("")
 				confirm_box.extend (conference_room_input)
+				if attached conference_room_input as conference_input then
+	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			exec_arr.put_front (staff_exec)
+				else
+	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    		    exec_arr.put_front (staff_exec)
+				end
 			end
 		else
 			create remote_label.default_create
@@ -524,7 +542,7 @@ feature {NONE} -- Implementation of the remove employee button
 
         	-- Show the main window again
         	main_window.show
-   		end -- end delete_staff
+   	 end -- end delete_staff
 
 
 
