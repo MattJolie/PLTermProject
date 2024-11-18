@@ -12,7 +12,9 @@ From there, you can compile up top and run the program both found in the toolbar
 Snowman Game:
 For this game, both a drawing board and command line will display when executed. The game is initialized after several seconds
 and played through the commandline. The drawings are prompted on wrong guesses and displayed in the white drawing board. This 
-project requires an extra library that can be found in Tools, Add Library, and Filter for Time. (Pip Process too from I forget from Matt Keefe)
+project requires an extra library to be installed in order to use the TIME library for the random generation of a word for the game, which can 
+be done by installing the IRON package which includes the TIME library. Then, the library must be added to the project by going to Tools, Add Library, 
+and Filter for TIME.
 
 Creative Project:
 This project will display an interactive GUI where you can add and remove employee objects created to show off the power of Eiffel
