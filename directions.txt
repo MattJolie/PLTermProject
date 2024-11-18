@@ -1,0 +1,19 @@
+The ideal OS for Eiffel Vision 2 is a Windows machine for installation and usage.
+
+https://www.eiffel.org/downloads
+From this link, you will be able to download EiffelStudio, the IDE of Eiffel which allows you to compile & execute code.
+
+Once set up, both programs will require Eiffel Vision 2 to use.
+There is an add project option which once all files are downloaded and in a file, you will be able to select the folder and add
+the file to your IDE. 
+
+From there, you can compile up top and run the program both found in the toolbar.
+
+Snowman Game:
+For this game, both a drawing board and command line will display when executed. The game is initialized after several seconds
+and played through the commandline. The drawings are prompted on wrong guesses and displayed in the white drawing board. This 
+project requires an extra library that can be found in Tools, Add Library, and Filter for Time. (Pip Process too from I forget from Matt Keefe)
+
+Creative Project:
+This project will display an interactive GUI where you can add and remove employee objects created to show off the power of Eiffel
+as an object-oriented language.

@@ -1,0 +1,8 @@
+APA 7th Edition
+
+EiffelBase Data Structures, Lists. (2024, June 3). https://www.eiffel.org/doc/solutions/EiffelBase_Data_Structures%2C_Lists
+ev_text_component Flat contracts. (n.d.). Copyright (C) 1984-2015, Eiffel Software and Others. https://www.eiffel.org/files/doc/static/trunk/libraries/vision2/ev_text_component_flatshort.html#f_start_selection
+Event Programming with Agents. (2024, June 3). https://www.eiffel.org/doc/solutions/Event_Programming_with_Agents
+Eiffel Classes. (2024, June 3). https://www.eiffel.org/doc/solutions/Eiffel_Classes
+all_libs class dictionary. (n.d.). https://www.eiffel.org/files/doc/static/trunk/libraries/class_list.html
+
