@@ -26,6 +26,10 @@ feature {NONE} -- Initialization
 			box: EV_VERTICAL_BOX -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_vertical_box_chart.html
 			title_label: EV_LABEL -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_label_chart.html
 			font: EV_FONT -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_font_chart.html
+			TEST: EMPLOYEE -- tESTING TEMP
+			TEST2: MANAGER
+			TEST3: EMPLOYEE
+			test4: MANAGER
 		do
 			create_interface_objects
 			create box.default_create
@@ -53,6 +57,15 @@ feature {NONE} -- Initialization
 			create employee_arr.make (0)  --Create globally
 			create manager_arr.make (0)
 			create exec_arr.make (0)
+			-- Te
+			create TEST.make_with_arguments ("Mike", "SWE", "Joe") -- temp 4 test
+			create test2.make_with_reports ("JOE", "SWE LEAD", "Boss", 112, employee_arr.to_array)
+			manager_arr.put_front (test2)
+			employee_arr.put_front (TEST)-- temp
+			create test3.make_with_arguments ("Fat Perez", "At", "Joe")
+			employee_arr.put_front (test3)
+			create test4.make_with_reports ("Big Joe", "SWE LEAD", "Boss", 112, employee_arr.to_array)
+			manager_arr.put_front (test4)
 
 			main_window.show
 
@@ -354,12 +367,17 @@ feature {NONE} -- Implementation of the remove employee button
 			remove_employee_window: EV_WINDOW
 			input_box: EV_VERTICAL_BOX
 			back_button: EV_BUTTON
-			delete_button: EV_BUTTON
 			employee_dropdown: EV_COMBO_BOX
 			manager_dropdown: EV_COMBO_BOX
 			executive_dropdown: EV_COMBO_BOX
+			e_label: EV_LABEL
+			m_label: EV_LABEL
+			exec_label: EV_LABEL
+			employee_button: EV_BUTTON
+			manager_button: EV_BUTTON
+			executive_button: EV_BUTTON
 			i: INTEGER
-			employee_list, manager_list, executive_list: ARRAYED_LIST [STRING_32] -- lists for the dropdowns
+			employee_list, manager_list, executive_list: ARRAYED_LIST [STRING] -- lists for the dropdowns
 			selected_employee_name: STRING_32
 		do
 			create remove_employee_window.default_create
@@ -367,11 +385,12 @@ feature {NONE} -- Implementation of the remove employee button
 			remove_employee_window.set_size (400, 300)
 
 
-			create input_box.default_create
+			create input_box.default_create -- Main Interaction Page
 
 			-- Employee Dropdown
+			create e_label
+			e_label.set_text ("Select Employee")
 			create employee_dropdown.default_create
-			employee_dropdown.set_text ("Select Employee")
 			create employee_list.make (employee_arr.count)
 
 			from
@@ -383,11 +402,14 @@ feature {NONE} -- Implementation of the remove employee button
 				i := i + 1
 			end
 			employee_dropdown.set_strings (employee_list)
+			input_box.extend (e_label)
 			input_box.extend (employee_dropdown)
+
 
 			-- Manager Dropdown
 			create manager_dropdown.default_create
-			manager_dropdown.set_text ("Select Manager")
+			create m_label
+			m_label.set_text ("Select Manager")
 			create manager_list.make (manager_arr.count)
 			from
 				i := 1
@@ -398,11 +420,14 @@ feature {NONE} -- Implementation of the remove employee button
 				i := i + 1
 			end
 			manager_dropdown.set_strings (manager_list)
+			input_box.extend (m_label)
 			input_box.extend (manager_dropdown)
 
 			-- Executive Dropdown
 			create executive_dropdown.default_create
-			executive_dropdown.set_text ("Select Executive")
+			create exec_label
+			exec_label.set_text ("Select Executive")
+
 			create executive_list.make (exec_arr.count)
 			from
 				i := 1
@@ -413,18 +438,29 @@ feature {NONE} -- Implementation of the remove employee button
 				i := i + 1
 			end
 			executive_dropdown.set_strings (executive_list)
+			input_box.extend (exec_label)
 			input_box.extend (executive_dropdown)
 
-			create delete_button.default_create
-			delete_button.set_text ("Delete")
-			--delete_button.select_actions.extend (agent delete_employee)
+			-- Delete logic based on which button pressed
+			create employee_button.default_create
+			employee_button.set_text ("Delete Employee Selected")
+			create manager_button.default_create
+			manager_button.set_text ("Delete Manager Selected")
+			create executive_button.default_create
+			executive_button.set_text ("Deleted Executive Selected")
+
+			employee_button.select_actions.extend (agent delete_employee(employee_dropdown.selected_text, remove_employee_window))
+		    manager_button.select_actions.extend (agent delete_employee (manager_dropdown.selected_text, remove_employee_window))
+			executive_button.select_actions.extend (agent delete_employee(executive_dropdown.selected_text, remove_employee_window))
 
 			create back_button.default_create
 			back_button.set_text ("Back")
 			back_button.select_actions.extend (agent return_to_main_page (remove_employee_window))
 
 
-			input_box.extend (delete_button)
+			input_box.extend (employee_button)
+			input_box.extend (manager_button)
+			input_box.extend (executive_button)
 			input_box.extend (back_button)
 
 			remove_employee_window.put (input_box)
@@ -432,7 +468,64 @@ feature {NONE} -- Implementation of the remove employee button
 			remove_employee_window.show
 		end -- end show_remove_interface
 
-	--delete_employee
+	delete_employee (staff_name: STRING_32; curr_window: EV_WINDOW)
+    	local
+       		i: INTEGER
+        	is_found: BOOLEAN
+    	do
+        	is_found := False
+
+       		-- Search & delete employee array
+        	from
+            	i := 1
+        	until
+            	i > employee_arr.count or else is_found
+        	loop
+            	if employee_arr.at(i).name.is_equal(staff_name) then
+                	employee_arr.remove_i_th(i)
+                	is_found := True
+            	end
+            	i := i + 1
+        	end
+
+        	-- Search & delete manager array
+        	if not is_found then
+            	from
+                	i := 1
+            	until
+                	i > manager_arr.count or else is_found
+            	loop
+                	if manager_arr.at(i).name.is_equal(staff_name) then
+                    	manager_arr.remove_i_th (i)
+                    	is_found := True
+               		end
+                	i := i + 1
+           		end
+        	end
+
+        	-- Search & delete executive array
+        	if not is_found then
+            	from
+                	i := 1
+           		until
+                	i > exec_arr.count or else is_found
+           		loop
+                	if exec_arr.at(i).name.is_equal(staff_name) then
+                    	exec_arr.remove_i_th (i)
+                    	is_found := True
+                	end
+                	i := i + 1
+            	end
+        	end
+
+        	if attached curr_window as l_window then
+            	l_window.destroy
+        	end
+
+        	-- Show the main window again
+        	main_window.show
+   		end -- end delete_staff
+
 
 
 feature
