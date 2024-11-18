@@ -1,3 +1,9 @@
+note
+	description: "Summary description for {MANAGER}."
+	author: "Matt Jolie, Matt Keefe, Paul O'Sullivan"
+	date: "11/15/24"
+	revision: "$Revision$"
+
 class
     MANAGER
 
@@ -9,19 +15,20 @@ create
 
 feature -- Initialize
 
-    make_with_reports (e_name: STRING; e_title: STRING; e_manager: STRING; office_num: INTEGER; e_reports: ARRAY [EMPLOYEE])
+
+    make_with_reports (e_name: STRING; e_title: STRING; e_manager: STRING; office_num: INTEGER; e_reports: ARRAYED_LIST [EMPLOYEE])
             -- Constructor
         do
             -- Initialize manager
             make_with_arguments (e_name, e_title, e_manager) -- Make employee
             office_number := office_num
-reports := e_reports
+			reports := e_reports
 
         end
 
 feature -- Acces
 
     office_number: INTEGER
-    reports: ARRAY [EMPLOYEE]
+    reports: ARRAYED_LIST [EMPLOYEE]
 
 end -- end class

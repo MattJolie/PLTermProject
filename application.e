@@ -26,6 +26,7 @@ feature {NONE} -- Initialization
 			box: EV_VERTICAL_BOX -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_vertical_box_chart.html
 			title_label: EV_LABEL -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_label_chart.html
 			font: EV_FONT -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_font_chart.html
+			ceo: CEO
 		do
 			create_interface_objects
 			create box.default_create
@@ -53,6 +54,8 @@ feature {NONE} -- Initialization
 			create employee_arr.make (0)  --Create globally
 			create manager_arr.make (0)
 			create exec_arr.make (0)
+
+			create ceo.make_ceo ("LKing", 309, exec_arr, 328)
 
 			main_window.show
 
@@ -330,10 +333,10 @@ feature {NONE} -- implementation of the Add Employee feature
 				conference_room_input.set_text ("")
 				confirm_box.extend (conference_room_input)
 				if attached conference_room_input as conference_input then
-	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
 	    			exec_arr.put_front (staff_exec)
 				else
-	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
 	    		    exec_arr.put_front (staff_exec)
 				end
 			end
