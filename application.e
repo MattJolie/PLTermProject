@@ -291,11 +291,11 @@ feature {NONE} -- implementation of the Add Employee feature
 			confirm_box.extend (executive_dropdown)
 			-- Ensure office_number_input is attached and handle it accordingly
 			if attached office_number_input as office_input then
-    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, office_input.text.to_integer, employee_arr.to_array)
+    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, office_input.text.to_integer)
     			manager_arr.put_front (staff_manager)
 			else
 
-    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, 100, employee_arr.to_array) -- Temp have not been able to work around the error object may be void, this fixes but not allowing for input
+    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, 100) -- Temp have not been able to work around the error object may be void, this fixes but not allowing for input
 				manager_arr.put_front (staff_manager)
 			end
 
@@ -327,10 +327,10 @@ feature {NONE} -- implementation of the Add Employee feature
 				conference_room_input.set_text ("")
 				confirm_box.extend (conference_room_input)
 				if attached conference_room_input as conference_input then
-	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, 250) -- Default 200 for executive office
 	    			exec_arr.put_front (staff_exec)
 				else
-	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, 250) -- Default 200 for executive office
 	    		    exec_arr.put_front (staff_exec)
 				end
 			end
