@@ -1,8 +1,22 @@
 APA 7th Edition
 
+file Flat contracts. (2020, November 20). https://www.eiffel.org/files/doc/static/24.05/libraries/base/file_flatshort.html
+
+Void-safety: Background, definition, and tools. (n.d.). Types as “attached” or “detachable.” https://www.eiffel.org/doc/eiffel/Void-safety-_Background%2C_definition%2C_and_tools#Types_as_%22attached%22_or_%22detachable%22
+
+Seiler, M. (2007, May 7). Random numbers. https://www.eiffel.org/article/random_numbers
+
+ev_combo_box Chart. (n.d.). https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_combo_box_chart.html
+
+Ev_button Chart. (n.d.). https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_button_chart.html
+
 EiffelBase Data Structures, Lists. (2024, June 3). https://www.eiffel.org/doc/solutions/EiffelBase_Data_Structures%2C_Lists
+
 ev_text_component Flat contracts. (n.d.). Copyright (C) 1984-2015, Eiffel Software and Others. https://www.eiffel.org/files/doc/static/trunk/libraries/vision2/ev_text_component_flatshort.html#f_start_selection
+
 Event Programming with Agents. (2024, June 3). https://www.eiffel.org/doc/solutions/Event_Programming_with_Agents
+
 Eiffel Classes. (2024, June 3). https://www.eiffel.org/doc/solutions/Eiffel_Classes
+
 all_libs class dictionary. (n.d.). https://www.eiffel.org/files/doc/static/trunk/libraries/class_list.html
 
