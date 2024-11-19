@@ -39,10 +39,9 @@ feature {NONE} -- Initialization
 			box.extend (title_label)
 			box.extend (add_employee_button)
 			box.extend (remove_employee_button)
-			box.extend (display_company_tree_button)
+			
 			box.extend (print_employee_info_button)
-			box.extend (update_employee_button)
-			box.extend (search_employee_button)
+
 			box.extend (quit_button)
 
 			create main_window.default_create
@@ -74,21 +73,13 @@ feature {NONE} -- Initialization
 			remove_employee_button.set_text ("Remove Employee")
 			remove_employee_button.set_minimum_size (150, 30)
 
-			create display_company_tree_button.default_create
-			display_company_tree_button.set_text ("Display Company Tree")
-			display_company_tree_button.set_minimum_size (150, 30)
+
 
 			create print_employee_info_button.default_create
 			print_employee_info_button.set_text ("Print Employee Information")
 			print_employee_info_button.set_minimum_size (150, 30)
 
-			create update_employee_button.default_create
-			update_employee_button.set_text ("Update Employee Information")
-			update_employee_button.set_minimum_size (150, 30)
 
-			create search_employee_button.default_create
-			search_employee_button.set_text ("Search For Employee")
-			search_employee_button.set_minimum_size (150, 30)
 
 			create quit_button.default_create
 			quit_button.set_text ("Quit Application")
@@ -99,10 +90,9 @@ feature -- Buttons for home page
 
 	add_employee_button: EV_BUTTON -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_button_chart.html
 	remove_employee_button: EV_BUTTON
-	display_company_tree_button: EV_BUTTON
+
 	print_employee_info_button: EV_BUTTON
-	update_employee_button: EV_BUTTON
-	search_employee_button: EV_BUTTON
+
 	quit_button: EV_BUTTON
 
 feature -- Arrays for staff
@@ -291,11 +281,11 @@ feature {NONE} -- implementation of the Add Employee feature
 			confirm_box.extend (executive_dropdown)
 			-- Ensure office_number_input is attached and handle it accordingly
 			if attached office_number_input as office_input then
-    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, office_input.text.to_integer, employee_arr.to_array)
+    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, office_input.text.to_integer)
     			manager_arr.put_front (staff_manager)
 			else
 
-    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, 100, employee_arr.to_array) -- Temp have not been able to work around the error object may be void, this fixes but not allowing for input
+    			create staff_manager.make_with_reports (a_name_input.text, a_job_title_dropdown.text, executive_dropdown.selected_text, 100) -- Temp have not been able to work around the error object may be void, this fixes but not allowing for input
 				manager_arr.put_front (staff_manager)
 			end
 
@@ -327,10 +317,10 @@ feature {NONE} -- implementation of the Add Employee feature
 				conference_room_input.set_text ("")
 				confirm_box.extend (conference_room_input)
 				if attached conference_room_input as conference_input then
-	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, 250) -- Default 200 for executive office
 	    			exec_arr.put_front (staff_exec)
 				else
-	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, 250) -- Default 200 for executive office
 	    		    exec_arr.put_front (staff_exec)
 				end
 			end
