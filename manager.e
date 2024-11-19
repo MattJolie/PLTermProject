@@ -22,7 +22,7 @@ feature -- Initialize
             -- Initialize manager
             make_with_arguments (e_name, e_title, e_manager) -- Make employee
             office_number := office_num
-			
+
 
         end
 
@@ -31,4 +31,4 @@ feature -- Acces
     office_number: INTEGER
 
 
-end -- end class
+end -- end 

@@ -14,7 +14,7 @@ create
     make_executive
 
 feature -- Initialize
-	
+
 
 
     make_executive (e_name: STRING; e_title: STRING; e_manager: STRING; office: INTEGER; conference_room: INTEGER)
