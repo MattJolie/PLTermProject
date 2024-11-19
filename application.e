@@ -26,7 +26,6 @@ feature {NONE} -- Initialization
 			box: EV_VERTICAL_BOX -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_vertical_box_chart.html
 			title_label: EV_LABEL -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_label_chart.html
 			font: EV_FONT -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_font_chart.html
-			ceo: CEO
 		do
 			create_interface_objects
 			create box.default_create
@@ -55,17 +54,12 @@ feature {NONE} -- Initialization
 			create manager_arr.make (0)
 			create exec_arr.make (0)
 
-			create ceo.make_ceo ("LKing", 309, exec_arr, 328)
-
 			main_window.show
 
 			quit_button.select_actions.extend (agent quit_application)
 			add_employee_button.select_actions.extend (agent show_add_employee_interface)
 			remove_employee_button.select_actions.extend (agent show_remove_interface)
-			display_company_tree_button.select_actions.extend (agent display_tree)
-			print_employee_info_button.select_actions.extend (agent print_employee_info)
-			update_employee_button.select_actions.extend (agent edit_employee)
-			search_employee_button.select_actions.extend (agent search_employee)
+			print_employee_info_button.select_actions.extend (agent show_staff_interface)
 
 		end
 
@@ -333,10 +327,10 @@ feature {NONE} -- implementation of the Add Employee feature
 				conference_room_input.set_text ("")
 				confirm_box.extend (conference_room_input)
 				if attached conference_room_input as conference_input then
-	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
 	    			exec_arr.put_front (staff_exec)
 				else
-	    			create staff_exec.make_executive (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
+	    			create staff_exec.make_manager (a_name_input.text, a_job_title_dropdown.text, "CEO", 200, manager_arr.to_array, 250) -- Default 200 for executive office
 	    		    exec_arr.put_front (staff_exec)
 				end
 			end
@@ -548,6 +542,109 @@ feature {NONE} -- Implementation of the remove employee button
    	 end -- end delete_staff
 
 
+feature {NONE} -- Implementation for show staff info
+
+	show_staff_interface
+		local
+			show_staff_window: EV_WINDOW
+			input_box: EV_VERTICAL_BOX
+			employee_button: EV_BUTTON
+			manager_button: EV_BUTTON
+			executive_button: EV_BUTTON
+			ceo_button: EV_BUTTON
+			back_button: EV_BUTTON
+		do
+			create show_staff_window.default_create
+			show_staff_window.set_title ("View Staff Directories")
+			show_staff_window.set_size (400, 300)
+
+			create input_box.default_create
+			create employee_button.default_create
+			create manager_button.default_create
+			create executive_button.default_create
+			create ceo_button.default_create
+			create back_button.default_create
+			employee_button.set_text ("Print Employees")
+			manager_button.set_text ("Print Managers")
+			executive_button.set_text ("Print Executives")
+			ceo_button.set_text ("Print CEO Information")
+			back_button.set_text ("Go Back")
+
+			input_box.extend (employee_button)
+			input_box.extend (manager_button)
+			input_box.extend (executive_button)
+			input_box.extend (ceo_button)
+			input_box.extend (back_button)
+
+			-- Implement button functionality
+			employee_button.select_actions.extend (agent print_employee_information)
+			manager_button.select_actions.extend (agent print_manager_information)
+			executive_button.select_actions.extend (agent print_executive_information)
+			--ceo_button.select_actions.extend(agent print_ceo...) when ceo class is finalized
+			back_button.select_actions.extend (agent return_to_main_page (show_staff_window))
+
+
+
+			show_staff_window.put (input_box)
+
+			show_staff_window.show
+		end
+feature {NONE} -- Implementation for printing
+
+    print_employee_information
+        local
+            i: INTEGER
+        do
+            from
+                i := 1
+            until
+                i > employee_arr.count
+            loop
+                io.put_string ("Employee: " + employee_arr.at(i).name + "%N")
+                i := i + 1
+            end
+			main_window.show
+        end
+
+    print_manager_information
+        local
+            i: INTEGER
+        do
+            from
+                i := 1
+            until
+                i > manager_arr.count
+            loop
+                io.put_string ("Manager: " + manager_arr.at(i).name + "%N")
+                i := i + 1
+            end
+        end
+
+    print_executive_information
+        local
+            i: INTEGER
+        do
+            from
+                i := 1
+            until
+                i > exec_arr.count
+            loop
+                io.put_string ("Executive: " + exec_arr.at(i).name + "%N")
+                i := i + 1
+            end
+        end
+
+    --print_ceo_information
+      --  do
+            -- Assuming the CEO is the first executive in the list, adjust as necessary
+        --    if exec_arr.count > 0 then
+          --      io.put_string ("CEO: " + exec_arr.at(1).name + "%N")
+            --else
+              --  io.put_string ("No CEO information available.%N")
+            --end
+        --end
+
+
 
 feature
 
@@ -558,25 +655,6 @@ feature
 			end
 		end
 
-	display_tree
-		do
-			io.put_string ("Displaying Tree Work")
-		end
-
-	print_employee_info
-		do
-			io.put_string ("Printing works")
-		end
-
-	edit_employee
-		do
-			io.put_string ("Edit Workss")
-		end
-
-	search_employee
-		do
-			io.put_string ("Searching Works")
-		end
 
 feature {NONE} -- Implementation
 
