@@ -39,9 +39,10 @@ feature {NONE} -- Initialization
 			box.extend (title_label)
 			box.extend (add_employee_button)
 			box.extend (remove_employee_button)
-			
+			box.extend (display_company_tree_button)
 			box.extend (print_employee_info_button)
-
+			box.extend (update_employee_button)
+			box.extend (search_employee_button)
 			box.extend (quit_button)
 
 			create main_window.default_create
@@ -73,13 +74,21 @@ feature {NONE} -- Initialization
 			remove_employee_button.set_text ("Remove Employee")
 			remove_employee_button.set_minimum_size (150, 30)
 
-
+			create display_company_tree_button.default_create
+			display_company_tree_button.set_text ("Display Company Tree")
+			display_company_tree_button.set_minimum_size (150, 30)
 
 			create print_employee_info_button.default_create
 			print_employee_info_button.set_text ("Print Employee Information")
 			print_employee_info_button.set_minimum_size (150, 30)
 
+			create update_employee_button.default_create
+			update_employee_button.set_text ("Update Employee Information")
+			update_employee_button.set_minimum_size (150, 30)
 
+			create search_employee_button.default_create
+			search_employee_button.set_text ("Search For Employee")
+			search_employee_button.set_minimum_size (150, 30)
 
 			create quit_button.default_create
 			quit_button.set_text ("Quit Application")
@@ -90,9 +99,10 @@ feature -- Buttons for home page
 
 	add_employee_button: EV_BUTTON -- https://www.eiffel.org/files/doc/static/24.05/libraries/vision2/ev_button_chart.html
 	remove_employee_button: EV_BUTTON
-
+	display_company_tree_button: EV_BUTTON
 	print_employee_info_button: EV_BUTTON
-
+	update_employee_button: EV_BUTTON
+	search_employee_button: EV_BUTTON
 	quit_button: EV_BUTTON
 
 feature -- Arrays for staff
@@ -541,7 +551,6 @@ feature {NONE} -- Implementation for show staff info
 			employee_button: EV_BUTTON
 			manager_button: EV_BUTTON
 			executive_button: EV_BUTTON
-			ceo_button: EV_BUTTON
 			back_button: EV_BUTTON
 		do
 			create show_staff_window.default_create
@@ -552,18 +561,15 @@ feature {NONE} -- Implementation for show staff info
 			create employee_button.default_create
 			create manager_button.default_create
 			create executive_button.default_create
-			create ceo_button.default_create
 			create back_button.default_create
 			employee_button.set_text ("Print Employees")
 			manager_button.set_text ("Print Managers")
 			executive_button.set_text ("Print Executives")
-			ceo_button.set_text ("Print CEO Information")
 			back_button.set_text ("Go Back")
 
 			input_box.extend (employee_button)
 			input_box.extend (manager_button)
 			input_box.extend (executive_button)
-			input_box.extend (ceo_button)
 			input_box.extend (back_button)
 
 			-- Implement button functionality
@@ -623,16 +629,6 @@ feature {NONE} -- Implementation for printing
                 i := i + 1
             end
         end
-
-    --print_ceo_information
-      --  do
-            -- Assuming the CEO is the first executive in the list, adjust as necessary
-        --    if exec_arr.count > 0 then
-          --      io.put_string ("CEO: " + exec_arr.at(1).name + "%N")
-            --else
-              --  io.put_string ("No CEO information available.%N")
-            --end
-        --end
 
 
 
