@@ -169,7 +169,7 @@ feature {NONE} -- add employee feature
 
 feature -- helper methods for populating dropdown boxes
 
-	-- ADDED FEATURE: populates executive list from the tuple
+	-- ADDED FEATURE: populates manager list from the tuple
 	populate_manager_list: ARRAYED_LIST [STRING_32]
 		local
 			manager_list: ARRAYED_LIST [STRING_32]
