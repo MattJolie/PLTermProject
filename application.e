@@ -364,7 +364,7 @@ feature -- remove employee feature
 
 			create input_box.default_create
 
-				-- employee dropdown box (ADDED FEATURE: code iterates thorugh tuple array insated of regular arrays)
+				-- employee dropdown box (ADDED FEATURE: code iterates through tuple array instead of original arrays)
 			create e_label.default_create
 			e_label.set_text ("Select Employee")
 			create employee_dropdown.default_create
@@ -383,7 +383,7 @@ feature -- remove employee feature
 			input_box.extend (e_label)
 			input_box.extend (employee_dropdown)
 
-				-- manager dropdown box
+				-- manager dropdown box (ADDED FEATURE: code iterates through tuple array instead of original arrays)
 			create m_label.default_create
 			m_label.set_text ("Select Manager")
 			create manager_dropdown.default_create
@@ -402,7 +402,7 @@ feature -- remove employee feature
 			input_box.extend (m_label)
 			input_box.extend (manager_dropdown)
 
-				-- executive dropdown box
+				-- executive dropdown box (ADDED FEATURE: code iterates through tuple array instead of original arrays)
 			create exec_label.default_create
 			exec_label.set_text ("Select Executive")
 			create executive_dropdown.default_create
