@@ -169,6 +169,7 @@ feature {NONE} -- add employee feature
 
 feature -- helper methods for populating dropdown boxes
 
+	-- ADDED FEATURE: populates executive list from the tuple
 	populate_manager_list: ARRAYED_LIST [STRING_32]
 		local
 			manager_list: ARRAYED_LIST [STRING_32]
@@ -188,6 +189,7 @@ feature -- helper methods for populating dropdown boxes
 			Result := manager_list
 		end
 
+	-- ADDED FEATURE: populates executive list from the tuple
 	populate_executive_list: ARRAYED_LIST [STRING_32]
 		local
 			executive_list: ARRAYED_LIST [STRING_32]
@@ -221,6 +223,8 @@ feature -- feature for processing employee input
 			office_number_label, conference_room_label: EV_LABEL
 			office_number_input, conference_room_input: EV_TEXT_FIELD
 			remote_label: EV_LABEL
+
+			-- ADDED FEATURE: TUPLE data structure
 			new_employee: TUPLE [name: STRING_8; job_title: STRING_8; work_mode: STRING_8]
 		do
 				-- default values to avoid problems from null/void values
@@ -242,10 +246,10 @@ feature -- feature for processing employee input
 			new_employee.put_reference (job_title_text.string, 2)
 			new_employee.put_reference (work_mode_text.string, 3)
 
-				-- adds the employee tuple to the array
+				-- ADDED FEATURE: adds the employee tuple to the array
 			employee_tuple_arr.put_front (new_employee)
 
-				-- populates manager/executive lists
+				-- ADDED FEATURE: populates manager/executive lists
 			manager_list := populate_manager_list
 			executive_list := populate_executive_list
 
