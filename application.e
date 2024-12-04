@@ -2,7 +2,8 @@ note
 	description: "Root class for a company employee management application"
 	authors: "Made by  Matt Keefe, Matt Jolie, Paul O'Sullivan"
 	date: "$Date: 2024/11/4 15:0:35 $"
-	revision: "1.1.1"
+	revision: "Tuple based storage was added"
+	revision: "Necessary variable, constructor, and GUI changes made to acccomodate multiple inheritance"
 
 class
 	APPLICATION
@@ -85,7 +86,7 @@ feature -- buttons for home page
 
 feature -- ADDED FEATURE: tuple-based storage for employee data
 
-	employee_tuple_arr: ARRAYED_LIST [TUPLE [name: STRING; job_title: STRING; work_mode: STRING]]
+	employee_tuple_arr: ARRAYED_LIST [TUPLE [name: STRING; job_title: STRING; work_mode: STRING; pay_type: STRING]]
 
 feature {NONE} -- add employee feature
 
@@ -103,6 +104,13 @@ feature {NONE} -- add employee feature
 			back_button: EV_BUTTON
 			job_titles: ARRAYED_LIST [STRING_32]
 			work_modes: ARRAYED_LIST [STRING_32]
+--********* Pay related fields ***************************************************************************************************
+			pay_type_label: EV_LABEL
+			pay_type_dropdown: EV_COMBO_BOX
+			pay_types: ARRAYED_LIST [STRING_32]
+			pay_amount_label: EV_LABEL
+			pay_amount_input: EV_TEXT_FIELD
+--********************************************************************************************************************************
 		do
 			create add_employee_window.default_create
 			add_employee_window.set_title ("Add New Employee")
@@ -137,9 +145,26 @@ feature {NONE} -- add employee feature
 			work_modes.extend ("Remote")
 			work_mode_dropdown.set_strings (work_modes)
 
+--********* New field added for multiple inheritance *****************************************************************************
+			create pay_type_label.default_create
+			pay_type_label.set_text ("Select Pay Type:")
+
+			create pay_type_dropdown.default_create
+			create pay_types.make (0)
+			pay_types.extend ("Hourly")
+			pay_types.extend ("Salary")
+			pay_type_dropdown.set_strings (pay_types)
+
+			create pay_amount_label.default_create
+			pay_amount_label.set_text ("Pay ($)")
+
+			create pay_amount_input.default_create
+			pay_amount_input.set_text ("")
+--********************************************************************************************************************************
+
 			create continue_button.default_create
 			continue_button.set_text ("Continue")
-			continue_button.select_actions.extend (agent process_employee_input (name_input, job_title_dropdown, work_mode_dropdown))
+			continue_button.select_actions.extend (agent process_employee_input (name_input, job_title_dropdown, work_mode_dropdown, pay_type_dropdown, pay_amount_input))
 
 			create back_button.default_create
 			back_button.set_text ("Back to Main Page")
@@ -151,6 +176,12 @@ feature {NONE} -- add employee feature
 			input_box.extend (job_title_dropdown)
 			input_box.extend (work_mode_label)
 			input_box.extend (work_mode_dropdown)
+--********* Pay related fields ***************************************************************************************************
+			input_box.extend (pay_type_label)
+			input_box.extend (pay_type_dropdown)
+			input_box.extend (pay_amount_label)
+			input_box.extend (pay_amount_input)
+--********************************************************************************************************************************
 			input_box.extend (continue_button)
 			input_box.extend (back_button)
 
@@ -169,7 +200,7 @@ feature {NONE} -- add employee feature
 
 feature -- helper methods for populating dropdown boxes
 
-	-- ADDED FEATURE: populates manager list from the tuple
+		-- ADDED FEATURE: populates manager list from the tuple
 	populate_manager_list: ARRAYED_LIST [STRING_32]
 		local
 			manager_list: ARRAYED_LIST [STRING_32]
@@ -189,7 +220,7 @@ feature -- helper methods for populating dropdown boxes
 			Result := manager_list
 		end
 
-	-- ADDED FEATURE: populates executive list from the tuple
+		-- ADDED FEATURE: populates executive list from the tuple
 	populate_executive_list: ARRAYED_LIST [STRING_32]
 		local
 			executive_list: ARRAYED_LIST [STRING_32]
@@ -210,26 +241,33 @@ feature -- helper methods for populating dropdown boxes
 		end
 
 feature -- feature for processing employee input
-
-	process_employee_input (a_name_input: EV_TEXT_FIELD; a_job_title_dropdown: EV_COMBO_BOX; a_work_mode_dropdown: EV_COMBO_BOX)
+--********** This was modified to include pay type info **************************************************************************
+	process_employee_input (a_name_input: EV_TEXT_FIELD; a_job_title_dropdown: EV_COMBO_BOX; a_work_mode_dropdown: EV_COMBO_BOX; a_pay_type_dropdown: EV_COMBO_BOX; a_pay_amount_input: EV_TEXT_FIELD)
 		local
 			confirm_window: EV_WINDOW
 			confirm_box: EV_VERTICAL_BOX
 			info_label: EV_LABEL
 			ok_button: EV_BUTTON
-			job_title_text, work_mode_text: STRING
+			job_title_text, work_mode_text, pay_type_text: STRING
 			manager_dropdown, executive_dropdown: EV_COMBO_BOX
 			manager_list, executive_list: ARRAYED_LIST [STRING_32]
-			office_number_label, conference_room_label: EV_LABEL
+			office_number_label, conference_room_label, manager_dropdown_label, executive_dropdown_label: EV_LABEL
 			office_number_input, conference_room_input: EV_TEXT_FIELD
 			remote_label: EV_LABEL
 
-			-- ADDED FEATURE: TUPLE data structure
-			new_employee: TUPLE [name: STRING_8; job_title: STRING_8; work_mode: STRING_8]
+				-- ADDED FEATURE: TUPLE data structure
+			new_employee: TUPLE [name: STRING_8; job_title: STRING_8; work_mode: STRING_8; pay_type: STRING_8]
+
+				-- ADDED FEATURE: Local variables for employee creation
+			new_employee_object: detachable EMPLOYEE
+			pay_amount: INTEGER
+			pay_info_label: EV_LABEL
+
 		do
 				-- default values to avoid problems from null/void values
 			job_title_text := "Unknown Job Title"
 			work_mode_text := "Unknown Work Mode"
+			pay_type_text := "Unknown Pay Cycle"
 
 				-- ensures the dropdown selections are not void
 			if attached a_job_title_dropdown.selected_item as job_item then
@@ -240,11 +278,32 @@ feature -- feature for processing employee input
 				work_mode_text := work_item.text
 			end
 
+			if attached a_pay_type_dropdown as pay_type then
+				pay_type_text := pay_type.text
+			end
+
+				-- ADDED FEATURE: Changes the pay amount input to an integer or 0 if it is void
+			if attached a_pay_amount_input.text as pay_text then
+				pay_amount := pay_text.to_integer
+			else
+				pay_amount := 0
+			end
+
 				-- ADDED FEATURE: creates and populates the employee tuple
 			create new_employee.default_create
 			new_employee.put_reference (a_name_input.text.string.to_string_8, 1)
 			new_employee.put_reference (job_title_text.string, 2)
 			new_employee.put_reference (work_mode_text.string, 3)
+			new_employee.put_reference (pay_type_text.string, 4)
+
+				-- ADDED FEATURE: assigns the appropriate employee class
+			if pay_type_text.is_equal ("Hourly") then
+				create {H_EMPLOYEE} new_employee_object.make_hourly_employee (new_employee.name, new_employee.job_title, "Unknown Manager", pay_amount)
+			elseif pay_type_text.is_equal ("Salary") then
+				create {S_EMPLOYEE} new_employee_object.make_salaried_employee (new_employee.name, new_employee.job_title, "Unknown Manager", pay_amount)
+			else
+				create {EMPLOYEE} new_employee_object.make_with_arguments (new_employee.name, new_employee.job_title, "Unknown Manager")
+			end
 
 				-- ADDED FEATURE: adds the employee tuple to the array
 			employee_tuple_arr.put_front (new_employee)
@@ -265,14 +324,33 @@ feature -- feature for processing employee input
 			info_label.set_text ("Employee Info: " + new_employee.name + " (" + new_employee.job_title + ") - " + new_employee.work_mode)
 			confirm_box.extend (info_label)
 
+				-- ADDED FEATURE: adds salary or hourly pay info to the confirm box
+			create pay_info_label.default_create
+			if pay_type_text.is_equal ("Hourly") then
+				pay_info_label.set_text ("Worker Type: Hourly | Hourly Rate: $" + pay_amount.out)
+			elseif pay_type_text.is_equal ("Salary") then
+				pay_info_label.set_text ("Worker Type: Salaried | Yearly Salary: $" + pay_amount.out)
+			else
+				pay_info_label.set_text ("Worker Type: Unknown | Pay Amount: $" + pay_amount.out)
+			end
+			confirm_box.extend (pay_info_label)
+
 				-- conditional logic for dropdowns and additional inputs
 			if job_title_text.is_equal ("Employee") then
+
+				create manager_dropdown_label.default_create
+				manager_dropdown_label.set_text ("Select Manager:")
+				confirm_box.extend (manager_dropdown_label)
 
 				create manager_dropdown.default_create
 				manager_dropdown.set_strings (manager_list)
 				confirm_box.extend (manager_dropdown)
 
 			elseif job_title_text.is_equal ("Manager") then
+
+				create executive_dropdown_label.default_create
+				executive_dropdown_label.set_text ("Select Executive:")
+				confirm_box.extend (executive_dropdown_label)
 
 				create executive_dropdown.default_create
 				executive_dropdown.set_strings (executive_list)
@@ -313,7 +391,7 @@ feature -- feature for processing employee input
 				-- adds the Finalize button
 			create ok_button.default_create
 			ok_button.set_text ("Finalize")
-			ok_button.select_actions.extend (agent finalize_action (a_name_input, a_job_title_dropdown, a_work_mode_dropdown, confirm_window))
+			ok_button.select_actions.extend (agent finalize_action (a_name_input, a_job_title_dropdown, a_work_mode_dropdown, a_pay_type_dropdown, a_pay_amount_input, confirm_window))
 			confirm_box.extend (ok_button)
 
 				-- shows the confirm window
@@ -321,7 +399,7 @@ feature -- feature for processing employee input
 			confirm_window.show
 		end
 
-	finalize_action (name_input: EV_TEXT_FIELD; job_dropdown: EV_COMBO_BOX; work_dropdown: EV_COMBO_BOX; current_window: EV_WINDOW)
+	finalize_action (name_input: EV_TEXT_FIELD; job_dropdown: EV_COMBO_BOX; work_dropdown: EV_COMBO_BOX; pay_type: EV_COMBO_BOX; pay_amount: EV_TEXT_FIELD; current_window: EV_WINDOW)
 		do
 				-- resets the name input to an empty string
 			name_input.set_text ("")
@@ -364,7 +442,7 @@ feature -- remove employee feature
 
 			create input_box.default_create
 
-				-- employee dropdown box (ADDED FEATURE: code iterates through tuple array instead of original arrays)
+				-- employee dropdown box (ADDED FEATURE: code iterates thorugh tuple array insated of regular arrays)
 			create e_label.default_create
 			e_label.set_text ("Select Employee")
 			create employee_dropdown.default_create
@@ -383,7 +461,7 @@ feature -- remove employee feature
 			input_box.extend (e_label)
 			input_box.extend (employee_dropdown)
 
-				-- manager dropdown box (ADDED FEATURE: code iterates through tuple array instead of original arrays)
+				-- manager dropdown box
 			create m_label.default_create
 			m_label.set_text ("Select Manager")
 			create manager_dropdown.default_create
@@ -402,7 +480,7 @@ feature -- remove employee feature
 			input_box.extend (m_label)
 			input_box.extend (manager_dropdown)
 
-				-- executive dropdown box (ADDED FEATURE: code iterates through tuple array instead of original arrays)
+				-- executive dropdown box
 			create exec_label.default_create
 			exec_label.set_text ("Select Executive")
 			create executive_dropdown.default_create
@@ -522,7 +600,8 @@ feature -- feature for printing employee information
 			until
 				i > employee_tuple_arr.count
 			loop
-				io.put_string ("Employee: " + employee_tuple_arr.at (i).name + " - " + employee_tuple_arr.at (i).job_title + " (" + employee_tuple_arr.at (i).work_mode + ")%N")
+					-- ADDED FEATURE: added pay type (salary vs. hourly)
+				io.put_string ("Employee: " + employee_tuple_arr.at (i).name + " - " + employee_tuple_arr.at (i).job_title + " (" + employee_tuple_arr.at (i).work_mode + ", " + employee_tuple_arr.at (i).pay_type + ")%N")
 				i := i + 1
 			end
 		end
